@@ -1,12 +1,8 @@
 <template>
   <div>
-    <HelloWorld
-      v-on:updateText="updateRaza($event)"
-    >
-    </HelloWorld>
+    <HelloWorld v-on:updateText="updateRaza($event)"> </HelloWorld>
 
-    <svg class="drawingBoard" width="75vw" height="75vh">
-      <p id="drawingBroadId"></p>
+    <svg id="drawingBox" class="drawingBoard" width="75vw" height="75vh">
       <rect
         @click="test"
         x="0"
@@ -15,15 +11,9 @@
         height="100%"
         style="fill: rgb(255, 255, 240); stroke-width: 3; stroke: rgb(0, 0, 0)"
       />
-      <svg height="100%" width="100%" xmlns="http://www.w3.org/2000/svg">
-        <circle
-          id="circle"
-
-          stroke="black"
-          stroke-width="1"
-          fill="red"
-        />
-      </svg>
+      <!-- <svg height="100%" width="100%" xmlns="http://www.w3.org/2000/svg">
+        <circle id="circle" stroke="black" stroke-width="1" fill="red" />
+      </svg> -->
     </svg>
   </div>
 </template>
@@ -37,6 +27,8 @@ export default {
   data: function () {
     return {
       inputValue: 5,
+      cx: 0,
+      cy: 0,
     };
   },
   // mounted() {
@@ -45,34 +37,40 @@ export default {
   // computed: {},
   methods: {
     logKey(e) {
-      let screenLog = document.querySelector("#drawingBroadId");
-      console.log(screenLog);
-      let svg = document.getElementById("circle");
-      let NS = svg.getAttribute("xmlns");
-      let c = document.createElementNS(NS,'circle')
-      
       this.cx = e.clientX - window.innerWidth * 0.125;
       this.cy = e.clientY - window.innerHeight * 0.125;
-      
-      c.setAttribute("cx", this.cx);
-      c.setAttribute("cy", this.cy);
-      c.setAttribute("r", this.inputValue);
+    },
+    drawingCircle() {
+      let svgCircle = document.createElementNS(
+        "http://www.w3.org/2000/svg",
+        "svg"
+      );
 
-      svg.appendChild(c);
+      svgCircle.setAttribute("width", "20");
+      svgCircle.setAttribute("height", "20");
+      let cir1 = document.createElementNS(
+        "http://www.w3.org/2000/svg",
+        "circle"
+      );
+      console.log(this.cx, this.cy, this.inputValue);
 
-      console.log(this.cx, this.cy);
+      cir1.setAttribute("cx", this.cx);
+      cir1.setAttribute("cy", this.cy);
+      cir1.setAttribute("r", this.inputValue);
+      cir1.setAttribute("fill", "red");
+      cir1.setAttribute("stroke", "black");
+      cir1.setAttribute("stroke-width", "1");
 
-      // console.log(NS);
-      svg.setAttribute("cx", this.cx);
-      svg.setAttribute("cy", this.cy);
-      svg.setAttribute("r", this.inputValue);
-      console.log(this.inputValue);
+      svgCircle.appendChild(cir1);
+
+      document.getElementById("drawingBox").appendChild(svgCircle);
+    },
+    updateRaza: function (event) {
+      this.inputValue = event;
     },
     test(event) {
       this.logKey(event);
-    },
-    updateRaza: function(event) {
-      this.inputValue = event;
+      this.drawingCircle();
     },
   },
 };
@@ -91,5 +89,11 @@ body {
   left: 12.5%;
   right: 12.5%;
   cursor: pointer;
+}
+svg {
+  display: contents;
+}
+svg.drawingBoard {
+  display: block;
 }
 </style>
