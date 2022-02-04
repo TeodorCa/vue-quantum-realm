@@ -5,7 +5,7 @@
       <input
         id="circleSize"
         type="number"
-        placeholder="7"
+        placeholder="5"
         value="inputValue"
         @input="updateText"
       />
@@ -16,18 +16,18 @@
 
 <script>
 export default {
-  props: ["inputValue"],
-  data: function () {
-    return {
-      newText: "",
-    };
-  },
+  // props: ["inputValue"],
+  // data: function () {
+  //   return {
+  //     newText: "",
+  //   };
+  // },
   methods: {
-    updateText(value) {
-      this.newText = value.data;
-
+    updateText: function(value) {
+      // this.newText = value.data;
+      this.$emit('updateText', value.data)
       // let inputValue = this.newText;
-      console.log(this.newText);
+      console.log(value.data);
     },
   },
 };

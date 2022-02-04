@@ -1,7 +1,6 @@
 <template>
   <div>
     <HelloWorld
-      v-bind:inputValue="inputValue"
       v-on:updateText="updateRaza($event)"
     >
     </HelloWorld>
@@ -14,14 +13,12 @@
         y="0"
         width="100%"
         height="100%"
-        style="fill: rgb(255, 255, 253); stroke-width: 3; stroke: rgb(0, 0, 0)"
+        style="fill: rgb(255, 255, 240); stroke-width: 3; stroke: rgb(0, 0, 0)"
       />
       <svg height="100%" width="100%" xmlns="http://www.w3.org/2000/svg">
         <circle
           id="circle"
-          cx="0"
-          cy="0"
-          r="5"
+
           stroke="black"
           stroke-width="1"
           fill="red"
@@ -39,9 +36,7 @@ export default {
   },
   data: function () {
     return {
-      cx: 0,
-      cy: 0,
-      inputValue: 0,
+      inputValue: 5,
     };
   },
   // mounted() {
@@ -52,27 +47,31 @@ export default {
     logKey(e) {
       let screenLog = document.querySelector("#drawingBroadId");
       console.log(screenLog);
-      // console.log(e.clientX);
-      // console.log(e.clientY);
-      // screenLog.innerText = `
-      // Screen X/Y : ${e.screenX}, ${e.screenY}
-      // Client X/Y : ${e.clientX}, ${e.clientY}
-      // `;
+      let svg = document.getElementById("circle");
+      let NS = svg.getAttribute("xmlns");
+      let c = document.createElementNS(NS,'circle')
+      
       this.cx = e.clientX - window.innerWidth * 0.125;
       this.cy = e.clientY - window.innerHeight * 0.125;
+      
+      c.setAttribute("cx", this.cx);
+      c.setAttribute("cy", this.cy);
+      c.setAttribute("r", this.inputValue);
+
+      svg.appendChild(c);
+
       console.log(this.cx, this.cy);
-      let svg = document.getElementById("circle");
-      // let NS = svg.getAttribute("xmlns");
+
       // console.log(NS);
       svg.setAttribute("cx", this.cx);
       svg.setAttribute("cy", this.cy);
-      // svg.setAttribute("r", this.inputValue);
+      svg.setAttribute("r", this.inputValue);
       console.log(this.inputValue);
     },
     test(event) {
       this.logKey(event);
     },
-    updateRaza(event) {
+    updateRaza: function(event) {
       this.inputValue = event;
     },
   },
