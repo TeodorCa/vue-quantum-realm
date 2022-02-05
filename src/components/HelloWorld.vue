@@ -5,9 +5,10 @@
       <input
         id="circleSize"
         type="number"
-        placeholder="5"
-        value="inputValue"
+        :placeholder="placeholderValue"
+        :value="inputValue"
         @input="updateText"
+        @focus="transformInputToValue"
       />
       <p>px</p>
     </div>
@@ -16,18 +17,36 @@
 
 <script>
 export default {
-  // props: ["inputValue"],
-  // data: function () {
-  //   return {
-  //     newText: "",
-  //   };
-  // },
+  data: function () {
+    return {
+      inputValue: "",
+      placeholderValue: "",
+    };
+  },
+  mounted() {
+    this.placeholderValue = this.getRandomInputValue();
+  },
   methods: {
-    updateText: function(value) {
+    updateText: function (eventDetails) {
       // this.newText = value.data;
-      this.$emit('updateText', value.data)
+      this.$emit("updateText", eventDetails.target.value);
+      this.inputValue = eventDetails.target.value;
       // let inputValue = this.newText;
-      console.log(value.data);
+
+      console.log(eventDetails.target.value);
+    },
+    getRandomInputValue: function () {
+      let randomInputValue = Math.random() * 5 + 5;
+      let randomInputValueTruncated = Math.round(randomInputValue);
+      return randomInputValueTruncated;
+    },
+    transformInputToValue: function (eventDetails) {
+      if (this.inputValue === "") {
+        let placeholderValue = eventDetails.target.placeholder;
+        this.$emit("updateText", placeholderValue);
+        this.inputValue = placeholderValue;
+        console.log(placeholderValue);
+      }
     },
   },
 };
