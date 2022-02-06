@@ -28,12 +28,8 @@ export default {
   },
   methods: {
     updateText: function (eventDetails) {
-      // this.newText = value.data;
       this.$emit("updateText", eventDetails.target.value);
       this.inputValue = eventDetails.target.value;
-      // let inputValue = this.newText;
-
-      console.log(eventDetails.target.value);
     },
     getRandomInputValue: function () {
       let randomInputValue = Math.random() * 5 + 5;
@@ -45,7 +41,6 @@ export default {
         let placeholderValue = eventDetails.target.placeholder;
         this.$emit("updateText", placeholderValue);
         this.inputValue = placeholderValue;
-        console.log(placeholderValue);
       }
     },
   },

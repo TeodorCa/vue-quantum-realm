@@ -1,76 +1,84 @@
 <template>
   <div>
-    <HelloWorld v-on:updateText="updateRaza($event)"> </HelloWorld>
+    <RadiusSetter v-on:updateText="updateRadius($event)"> </RadiusSetter>
 
-    <svg id="drawingBox" class="drawingBoard" width="75vw" height="75vh">
+    <svg id="drawingBox" class="box" ref="box" width="75vw" height="75vh">
       <rect
-        @click="test"
+        @click="addCircleToList"
         x="0"
         y="0"
         width="100%"
         height="100%"
         style="fill: rgb(255, 255, 240); stroke-width: 3; stroke: rgb(0, 0, 0)"
       />
-      <!-- <svg height="100%" width="100%" xmlns="http://www.w3.org/2000/svg">
-        <circle id="circle" stroke="black" stroke-width="1" fill="red" />
-      </svg> -->
+      <svg v-for="circle in circleList" :key="circle.id">
+        <svg width="20" height="20">
+          <circle
+            :id="circle.id"
+            :cx="circle.cx"
+            :cy="circle.cy"
+            :r="circle.r"
+            fill="red"
+            stroke="black"
+            stroke-width="1"
+            @mousedown="drag"
+            @mouseup="drop"
+          ></circle>
+        </svg>
+      </svg>
     </svg>
   </div>
 </template>
 <script>
-import HelloWorld from "./components/HelloWorld.vue";
-
+import RadiusSetter from "./components/RadiusSetter.vue";
+import { v4 as uuid } from "uuid";
 export default {
   components: {
-    HelloWorld,
+    RadiusSetter,
   },
   data: function () {
     return {
-      inputValue: 5,
-      cx: 0,
-      cy: 0,
+      inputValue: this.inputValue,
+      circleList: [],
     };
   },
-  // mounted() {
-  //   this.test();
-  // },
-  // computed: {},
   methods: {
-    logKey(e) {
-      this.cx = e.clientX - window.innerWidth * 0.125;
-      this.cy = e.clientY - window.innerHeight * 0.125;
+    addCircleToList(eventDetails) {
+      const cx = eventDetails.clientX - window.innerWidth * 0.125;
+      const cy = eventDetails.clientY - window.innerHeight * 0.125;
+      const newCircle = {
+        id: uuid(),
+        cx: cx,
+        cy: cy,
+        r: this.inputValue,
+      };
+      this.circleList = [...this.circleList, newCircle];
     },
-    drawingCircle() {
-      let svgCircle = document.createElementNS(
-        "http://www.w3.org/2000/svg",
-        "svg"
-      );
-
-      svgCircle.setAttribute("width", "20");
-      svgCircle.setAttribute("height", "20");
-      let cir1 = document.createElementNS(
-        "http://www.w3.org/2000/svg",
-        "circle"
-      );
-      console.log(this.cx, this.cy, this.inputValue);
-
-      cir1.setAttribute("cx", this.cx);
-      cir1.setAttribute("cy", this.cy);
-      cir1.setAttribute("r", this.inputValue);
-      cir1.setAttribute("fill", "red");
-      cir1.setAttribute("stroke", "black");
-      cir1.setAttribute("stroke-width", "1");
-
-      svgCircle.appendChild(cir1);
-
-      document.getElementById("drawingBox").appendChild(svgCircle);
-    },
-    updateRaza: function (event) {
+    updateRadius: function (event) {
       this.inputValue = event;
     },
-    test(event) {
-      this.logKey(event);
-      this.drawingCircle();
+    drag() {
+      this.$refs.box.addEventListener("mousemove", this.move);
+    },
+    drop() {
+      this.$refs.box.removeEventListener("mousemove", this.move);
+    },
+    move(event) {
+      const circleId = event.target.id;
+      const cx = event.offsetX;
+      const cy = event.offsetY;
+      const newCircleList = this.circleList.map((circle) => {
+        if (circle.id === circleId) {
+          return {
+            ...circle,
+            cx: cx,
+            cy: cy,
+          };
+        } else {
+          return circle;
+        }
+      });
+      this.circleList = newCircleList;
     },
   },
 };
@@ -82,7 +90,7 @@ body {
   justify-content: center;
   align-items: center;
 }
-.drawingBoard {
+.box {
   position: absolute;
   top: 12.5%;
   bottom: 12.5%;
@@ -93,7 +101,7 @@ body {
 svg {
   display: contents;
 }
-svg.drawingBoard {
+svg.box {
   display: block;
 }
 </style>
